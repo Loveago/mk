@@ -1,0 +1,47 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:15
+    container_name: mk_db
+    environment:
+      POSTGRES_USER: mk
+      POSTGRES_PASSWORD: mkpassword
+      POSTGRES_DB: mk_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  api:
+    build: ./backend
+    container_name: mk_api
+    env_file:
+      - backend/.env
+    ports:
+      - "4000:4000"
+    depends_on:
+      - db
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    command: sh -c "npx prisma generate && npm run dev"
+
+  web:
+    build: ./frontend
+    container_name: mk_web
+    env_file:
+      - frontend/.env
+    ports:
+      - "5173:5173"
+    depends_on:
+      - api
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: npm run dev -- --host
+
+volumes:
+  db_data:
+
+

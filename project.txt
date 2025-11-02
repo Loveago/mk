@@ -1,0 +1,293 @@
+Goal:
+Build a full-featured multi-vendor eCommerce marketplace inspired by Jumia.com.gh, with separate dashboards for Admin, Vendors, and Customers — including full product management, orders, payments, analytics, and CMS.
+
+🚀 Project Overview
+
+I’m building a marketplace web app like Jumia Ghana using:
+
+Backend: Node.js + Express.js
+
+Frontend: React + Tailwind CSS
+
+Database: PostgreSQL or MySQL (your choice)
+
+Auth: JWT (access + refresh tokens)
+
+File Storage: local
+
+Payment Integration: Mobile Money (Ghana), Credit/Debit cards, Cash on Delivery
+
+Deployment: Docker-ready, scalable API structure
+
+The goal:
+A production-ready system with Admin, Vendor, and Customer roles, and clear separation of concerns.
+
+🧩 Core Modules & Features
+1. Authentication & User Management
+
+Roles: Admin, Vendor, Customer
+
+JWT-based auth (access + refresh)
+
+Password hashing (bcrypt)
+
+Email & phone number verification
+
+Forgot/reset password flow
+
+Vendor registration → requires admin approval
+
+Admin: can suspend/reactivate users
+
+2. Product Management
+
+Vendor: CRUD products (title, description, price, stock, category, images, variants, weight, brand)
+
+Admin: can edit or disable any vendor’s product
+
+Categories + subcategories (nested)
+
+Search + filters (category, price range, rating, vendor)
+
+Pagination for large product lists
+
+3. Orders & Checkout
+
+Cart management per user
+
+Checkout flow:
+
+Address selection
+
+Shipping option
+
+Payment method (Momo, Card, COD)
+
+Order lifecycle: Pending → Processing → Shipped → Delivered → Cancelled
+
+Vendor sees only their own order items
+
+Admin can view and manage all orders
+
+4. Payments & Payouts
+
+Integrate payment gateways for:
+
+MTN Mobile Money
+
+Card payments
+
+Cash on Delivery
+
+Admin dashboard: payout management, transaction logs
+
+Vendor dashboard: earnings summary, withdrawal requests
+
+Refund management
+
+5. Shipping & Delivery
+
+Shipping regions (Greater Accra, Ashanti, etc.)
+
+Flat or weight-based shipping rates
+
+Order tracking number
+
+Integration-ready for logistics APIs
+
+6. Reviews & Ratings
+
+Customers can review purchased products
+
+Vendors can reply
+
+Admin moderation controls
+
+7. Flash Sales, Promotions & Coupons
+
+Admin can create:
+
+Flash sales with start/end time
+
+Discount codes
+
+Featured product banners
+
+Countdown timers on front-end
+
+8. CMS / Static Pages
+
+Admin can create or edit pages: About, Contact, Privacy, Terms
+
+Editable from the admin panel
+
+9. Admin Panel (Backend + Frontend)
+
+Dashboard: total sales, orders, users, vendors, top-selling products
+
+Manage:
+
+Users (ban, approve, edit)
+
+Vendors (approve, suspend)
+
+Products (approve, disable)
+
+Categories
+
+CMS pages
+
+Promotions
+
+System settings: site name, currency, tax rates, shipping zones
+
+10. Vendor Dashboard
+
+Overview: total sales, recent orders, top-selling items
+
+Manage products & inventory
+
+Order management (mark as shipped/delivered)
+
+Payments/payouts page
+
+Profile settings
+
+11. Customer Front-End
+
+Home page with banners, flash sales, categories
+
+Product listing & filtering
+
+Product detail pages (carousel, description, reviews)
+
+Cart, Checkout, Order Tracking
+
+Account page: order history, saved addresses, wishlist
+
+Responsive design
+
+🏗️ Technical Stack
+
+Backend (Node.js + Express.js)
+
+Folder structure:
+
+/src
+  /config
+  /controllers
+  /models
+  /routes
+  /middleware
+  /services
+  /utils
+
+
+ORM: Prisma or Sequelize
+
+Environment variables in .env
+
+Secure auth middleware (role-based)
+
+Swagger API docs
+
+Frontend (React + Tailwind)
+
+Pages: Home, Product, Cart, Checkout, Account, Admin, Vendor
+
+State management: Redux Toolkit or React Query
+
+Component-driven design with shadcn/ui or Chakra UI
+
+📦 API Endpoints (examples)
+Endpoint	Method	Role	Description
+/api/auth/register	POST	All	Register customer/vendor
+/api/auth/login	POST	All	Login & get tokens
+/api/admin/users	GET	Admin	Manage users
+/api/vendor/products	CRUD	Vendor	Manage products
+/api/products	GET	Public	Get all products
+/api/orders	CRUD	Customer/Vendor/Admin	Manage orders
+/api/payments/checkout	POST	Customer	Process payment
+/api/admin/promotions	CRUD	Admin	Manage flash sales
+/api/cms/pages	CRUD	Admin	Manage static pages
+⚙️ Database Models (simplified overview)
+
+User: id, name, email, phone, password, role, status
+
+VendorProfile: id, userId, storeName, bankInfo
+
+Category: id, name, parentId
+
+Product: id, vendorId, categoryId, title, description, price, stock, images, status
+
+Order: id, userId, total, status, paymentMethod, shippingInfo
+
+OrderItem: id, orderId, productId, quantity, subtotal
+
+Payment: id, orderId, amount, status, method
+
+Review: id, userId, productId, rating, comment
+
+Promotion: id, title, discount, startDate, endDate
+
+Page: id, title, slug, content
+
+🔒 Security
+
+JWT token verification middleware
+
+Role-based access control
+
+Input validation (Joi or Zod)
+
+CSRF protection for web routes
+
+Secure password storage (bcrypt)
+
+🚀 Deployment
+
+Dockerfile for backend & frontend
+
+.env.example for configuration
+
+Run locally with docker-compose up
+
+Production deploy: Cpanel/ render 
+
+🧱 Tasks for Cursor
+
+Generate the Node.js Express backend project structure with folders and sample boilerplate.
+
+Implement user authentication (JWT) module.
+
+Create database schema using Prisma or Sequelize.
+
+Implement CRUD routes for products, orders, and categories.
+
+Set up admin role middleware and vendor role middleware.
+
+Add sample seed data for categories & products.
+
+Generate React frontend skeleton for customer, vendor, admin panels.
+
+Document API with Swagger.
+
+Add sample .env configuration.
+
+Add Docker setup for local dev.
+
+🏁 Final Deliverables
+
+Full backend code (Node.js + Express)
+
+Full frontend code (React + Tailwind)
+
+Database schema + migrations
+
+Seed data script
+
+Swagger docs
+
+README.md with setup instructions
+
+Docker config for deployment
