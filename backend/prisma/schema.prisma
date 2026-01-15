@@ -1,0 +1,171 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String          @id @default(cuid())
+  email          String          @unique
+  phone          String?
+  passwordHash   String
+  role           String
+  status         String          @default("PENDING")
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  vendorProfile  VendorProfile?
+  customerProfile CustomerProfile?
+  products       Product[]       @relation("VendorProducts")
+  orders         Order[]         @relation("CustomerOrders")
+  reviews        Review[]
+  addresses      Address[]
+}
+
+model VendorProfile {
+  userId       String  @id
+  user         User    @relation(fields: [userId], references: [id])
+  companyName  String
+  displayName  String?
+  approvedAt   DateTime?
+  payoutDetails String?
+}
+
+model CustomerProfile {
+  userId     String @id
+  user       User   @relation(fields: [userId], references: [id])
+  firstName  String?
+  lastName   String?
+}
+
+model Address {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  line1     String
+  line2     String?
+  city      String?
+  region    String
+  country   String   @default("Ghana")
+  postalCode String?
+  phone     String?
+
+  ordersShipping Order[] @relation("ShippingAddress")
+  ordersBilling  Order[] @relation("BillingAddress")
+}
+
+model Category {
+  id        String     @id @default(cuid())
+  name      String
+  slug      String     @unique
+  parentId  String?
+  parent    Category?  @relation("CategoryToCategory", fields: [parentId], references: [id])
+  children  Category[] @relation("CategoryToCategory")
+  products  Product[]
+}
+
+model Product {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String?
+  price       Float
+  currency    String    @default("GHS")
+  stockQty    Int       @default(0)
+  status      String    @default("ACTIVE")
+  weightGrams Int?
+  images      String?
+  vendorId    String
+  vendor      User      @relation("VendorProducts", fields: [vendorId], references: [id])
+  categoryId  String
+  category    Category  @relation(fields: [categoryId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  orderItems  OrderItem[]
+  reviews     Review[]
+}
+
+model Order {
+  id                String       @id @default(cuid())
+  customerId        String
+  customer          User         @relation("CustomerOrders", fields: [customerId], references: [id])
+  status            String       @default("PENDING")
+  total             Float
+  currency          String       @default("GHS")
+  shippingAddressId String?
+  shippingAddress   Address?     @relation("ShippingAddress", fields: [shippingAddressId], references: [id])
+  billingAddressId  String?
+  billingAddress    Address?     @relation("BillingAddress", fields: [billingAddressId], references: [id])
+  paymentStatus     String       @default("PENDING")
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  items    OrderItem[]
+  payments Payment[]
+  shipment Shipment?
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id])
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int
+  unitPrice Float
+}
+
+model Payment {
+  id        String        @id @default(cuid())
+  orderId   String
+  order     Order         @relation(fields: [orderId], references: [id])
+  amount    Float
+  currency  String
+  method    String
+  provider  String
+  reference String        @unique
+  status    String        @default("PENDING")
+  createdAt DateTime      @default(now())
+}
+
+model Shipment {
+  id             String   @id @default(cuid())
+  orderId        String   @unique
+  order          Order    @relation(fields: [orderId], references: [id])
+  carrier        String
+  trackingNumber String?
+  status         String   @default("PROCESSING")
+  region         String
+  cost           Float?
+}
+
+model Review {
+  id         String       @id @default(cuid())
+  productId  String
+  product    Product      @relation(fields: [productId], references: [id])
+  customerId String
+  customer   User         @relation(fields: [customerId], references: [id])
+  rating     Int
+  comment    String?
+  status     String       @default("PENDING")
+  createdAt  DateTime     @default(now())
+}
+
+model Promotion {
+  id              String   @id @default(cuid())
+  name            String
+  discountPercent Int
+  startAt         DateTime
+  endAt           DateTime
+}
+
+model SiteSetting {
+  key   String @id
+  value String
+}
+
+
